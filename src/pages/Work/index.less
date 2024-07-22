@@ -1,0 +1,77 @@
+.work-card {
+    .ant-card-body {
+        padding: 10px;
+    }
+
+    .work-prompt {
+        width: 100%;
+        font-size: 12px;
+        display: flex;
+        align-items: center; /* 垂直居中 */
+        white-space: pre-wrap; /* 允许换行 */
+        overflow: hidden; /* 隐藏超出的内容 */
+    }
+
+    .work-prompt-content {
+      width: 88%;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* 最多显示两行 */
+      -webkit-box-orient: vertical;
+      text-overflow: ellipsis; /* 用省略号表示超出的部分 */
+      flex-grow: 1; /* 占据所有可用空间 */
+    }
+
+    .icon-copy {
+      align-self: flex-end;
+      margin-left: 0.5em; /* 为图标留出空间 */
+    }
+
+}
+
+.work-button-extra {
+    display: inline-block; /* 使div像一个内联元素，方便排版 */
+      background-color: rgba(0, 0, 0, 0.5); /* 淡灰色背景 */
+      color: #333; /* 图标颜色 */
+      border-radius: 4px; /* 圆角 */
+      padding: 8px; /* 内边距，调整按钮大小 */
+      cursor: pointer; /* 鼠标变成手型 */
+      transition: background-color 0.3s ease; /* 平滑过渡背景色变化 */
+}
+
+.work-button-extra:hover {
+  background-color: rgba(49, 49, 49, 0.85); /* 鼠标悬停时更深的灰色背景 */
+}
+
+.work-button-extra .anticon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(230 232 236);
+}
+
+.work-infinite-scroll-list {
+    margin-top: 10px;
+}
+
+.work-optional-container {
+    font-size: 13px;
+}
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -15px; /* gutter size offset */
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 15px; /* gutter size */
+  background-clip: padding-box;
+}
+
+/* Style your items */
+.my-masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
+  margin-bottom: 30px;
+}
