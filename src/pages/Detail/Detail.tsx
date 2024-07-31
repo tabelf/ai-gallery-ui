@@ -7,8 +7,10 @@ import {fetchWorkDetail, fetchWorkExcellent} from "@/store/modules/work";
 import {downloadFile, getEmpty, getGenerateCategory} from "@/utils/utils";
 import {Img2Img} from "@/utils/constants";
 import {DownloadOutlined, HeartOutlined, MenuOutlined, UserOutlined} from '@ant-design/icons';
+import {useTranslation} from "react-i18next";
 
 function Detail() {
+    const {t, i18n} = useTranslation();
     const [searchParams] = useSearchParams();
     const dispatch = useDispatch();
     const workDetail = useSelector(state => state.work.workDetail);
@@ -33,54 +35,54 @@ function Detail() {
 
     const items = [
         {
-            label: '分类',
-            children: getGenerateCategory(workDetail.category),
+            label: t('detail.category'),
+            children: getGenerateCategory(workDetail.category, i18n.language),
         },
         {
-            label: '尺寸',
-            children: getEmpty(workDetail.size),
+            label: t('detail.size'),
+            children: getEmpty(workDetail.size, i18n.language),
         },
         {
-            label: '种子',
+            label: t('detail.seed'),
             children: workDetail.seed,
         },
         {
-            label: '采样器',
+            label: t('detail.sampler_name'),
             children: workDetail.sampler_name,
         },
         {
-            label: '步数',
+            label: t('detail.steps'),
             children: workDetail.steps,
         },
         {
-            label: '引导系数',
+            label: t('detail.cfg_scale'),
             children: workDetail.cfg_scale,
         },
         {
-            label: '生成数量',
+            label: t('detail.total'),
             children: workDetail.total,
         },
         {
-            label: '模型名称',
+            label: t('detail.model_name'),
             children: workDetail.sd_model_name,
         },
         {
-            label: 'VAE名称',
-            children: getEmpty(workDetail.sd_vae_name),
+            label: t('detail.vae_name'),
+            children: getEmpty(workDetail.sd_vae_name, i18n.language),
         },
         {
-            label: '生成时间',
+            label: t('detail.job_timestamp'),
             children: workDetail.job_timestamp,
         },
         {
-            label: 'SD系统版本',
+            label: t('detail.version'),
             children: workDetail.version,
         },
     ];
     if (workDetail.category === Img2Img && workDetail.ref_images) {
         items.push({
-            label: '参考图',
-            children: <Image width={150} src={workDetail.ref_images[0]} />,
+            label: t('detail.ref_image'),
+            children: <Image width={150} src={workDetail.ref_images[0]}/>,
         });
     }
 
@@ -159,28 +161,28 @@ function Detail() {
                                                     backgroundColor: '#e3e5e7',
                                                     color: '#9499a0'
                                                 }}
-                                                    onClick={() => handleMarkExcellent(workDetail.task_id, workDetail.details[subIndex], false)}
-                                                    icon={<MenuOutlined/>}>已标记</Button>
+                                                        onClick={() => handleMarkExcellent(workDetail.task_id, workDetail.details[subIndex], false)}
+                                                        icon={<MenuOutlined/>}>{t('common.flagged')}</Button>
                                             ) : (
                                                 <Button type={"primary"}
-                                                    onClick={() => handleMarkExcellent(workDetail.task_id, workDetail.details[subIndex], true)}
-                                                    icon={<HeartOutlined/>}>优秀</Button>
+                                                        onClick={() => handleMarkExcellent(workDetail.task_id, workDetail.details[subIndex], true)}
+                                                        icon={<HeartOutlined/>}>{t('common.excellent')}</Button>
                                             )
                                         )
                                     }
                                     <Button
                                         onClick={() => handleDownload(workDetail.details)}
-                                        icon={<DownloadOutlined/>}>全部下载</Button>
+                                        icon={<DownloadOutlined/>}>{t('common.download')}</Button>
                                 </Space>
                             </div>
                         </div>
-                        <Card title="提示词" style={{marginTop: 15}}>
+                        <Card title={t('common.prompt')} style={{marginTop: 15}}>
                             {workDetail.prompt}
                         </Card>
-                        <Card title="反向提示词" style={{marginTop: 20}}>
+                        <Card title={t('common.negative_prompt')} style={{marginTop: 20}}>
                             {getEmpty(workDetail.negative_prompt)}
                         </Card>
-                        <Card title="详细信息" style={{marginTop: 20}}>
+                        <Card title={t('common.details')} style={{marginTop: 20}}>
                             <Descriptions column={1} items={items}/>
                         </Card>
                     </div>

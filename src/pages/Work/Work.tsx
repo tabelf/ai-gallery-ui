@@ -3,13 +3,14 @@ import Masonry from "react-masonry-css";
 import usePage from "@/hook/Page";
 import {useDispatch, useSelector} from "react-redux";
 import {clearWorkList, fetchModelList, fetchSizeList, fetchWorkList} from "@/store/modules/work";
-import {CaretDownOutlined, CopyOutlined, UserOutlined} from '@ant-design/icons';
+import {CaretDownOutlined, UserOutlined} from '@ant-design/icons';
 import InfiniteScroll from "react-infinite-scroll-component";
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import copy from "copy-to-clipboard";
 import {useNavigate} from "react-router-dom";
 import {CopyIcon, LayerIcon} from "@/assets/Icon";
 import {useCollapse} from "@/hook/context";
+import {useTranslation} from "react-i18next";
 
 const breakPoints = {
     490: 1,
@@ -30,15 +31,16 @@ const breakPoints = {
 };
 
 function Work() {
+    const { t } = useTranslation();
     const {page, setPage} = usePage(20, loadWorkData);
     const cardRef = useRef(null); // 创建一个ref来引用Card组件
     const [tooltipWidth, setTooltipWidth] = useState(0); // 状态来存储tooltip的宽度
     const [option, setOption] = useState({
-        sortedName: "时间正序",
-        sizeName: "全部",
-        modelName: "全部",
-        hasExcellent: "全部",
-        hasRefImage: "不限"
+        sortedName: t('work.time_asc'),
+        sizeName: t('work.all'),
+        modelName: t('work.all'),
+        hasExcellent: t('work.all'),
+        hasRefImage: t('work.no_limit'),
     });
 
     const dispatch = useDispatch();
@@ -136,7 +138,7 @@ function Work() {
 
     function handleCopy(text) {
         copy(text);
-        message.success('复制成功');
+        message.success(t('common.copy'));
     }
 
     function handleNavDetail(taskId) {
@@ -145,8 +147,8 @@ function Work() {
 
     const modelItems = [
         {
-            label: "全部",
-            key: ['', '全部'],
+            label: t('work.all'),
+            key: ['', t('work.all')],
             onClick: handleModel,
         }
     ];
@@ -161,8 +163,8 @@ function Work() {
 
     const sizeItems = [
         {
-            label: "全部",
-            key: ['', '全部'],
+            label: t('work.all'),
+            key: ['', t('work.all')],
             onClick: handleSize,
         }
     ];
@@ -177,49 +179,49 @@ function Work() {
 
     const refItems = [
         {
-            label: "不限",
-            key: ['', '不限'],
+            label: t('work.no_limit'),
+            key: ['', t('work.no_limit')],
             onClick: handleRefImage
         },
         {
-            label: "无",
-            key: ['0', '无'],
+            label: t('work.no'),
+            key: ['0', t('work.no')],
             onClick: handleRefImage
         },
         {
-            label: "有",
-            key: ['1', '有'],
+            label: t('work.yes'),
+            key: ['1', t('work.yes')],
             onClick: handleRefImage
         }
     ];
 
     const excellentItems = [
         {
-            label: "全部",
-            key: ['', '全部'],
+            label: t('work.all'),
+            key: ['', t('work.all')],
             onClick: handleExcellent
         },
         {
-            label: "普通",
-            key: ['0', '普通'],
+            label: t('work.ordinary'),
+            key: ['0', t('work.ordinary')],
             onClick: handleExcellent
         },
         {
-            label: "优秀",
-            key: ['1', '优秀'],
+            label: t('common.excellent'),
+            key: ['1', t('common.excellent')],
             onClick: handleExcellent
         }
     ];
 
     const orderByItems = [
         {
-            label: '时间正序',
-            key: ['asc', '时间正序'],
+            label: t('work.time_asc'),
+            key: ['asc', t('work.time_asc')],
             onClick: handleOrderBy
         },
         {
-            label: '时间倒叙',
-            key: ['desc', '时间倒叙'],
+            label: t('work.time_desc'),
+            key: ['desc', t('work.time_desc')],
             onClick: handleOrderBy
         }
     ];
@@ -228,11 +230,11 @@ function Work() {
         <div>
             <div className={"work-optional-container"}>
                 <Space size={"large"}>
-                    <WorkSelector items={orderByItems} title={"排序：" + option.sortedName}/>
-                    <WorkSelector items={sizeItems} title={"尺寸：" + option.sizeName}/>
-                    <WorkSelector items={modelItems} title={"模型：" + option.modelName}/>
-                    <WorkSelector items={excellentItems} title={"作品：" + option.hasExcellent}/>
-                    <WorkSelector items={refItems} title={"参考图：" + option.hasRefImage}/>
+                    <WorkSelector items={orderByItems} title={t('work.sorted') +"：" + option.sortedName}/>
+                    <WorkSelector items={sizeItems} title={t('work.size') + "：" + option.sizeName}/>
+                    <WorkSelector items={modelItems} title={t('work.model') + "：" + option.modelName}/>
+                    <WorkSelector items={excellentItems} title={t('work.work') + "：" + option.hasExcellent}/>
+                    <WorkSelector items={refItems} title={t('work.ref_image') + "：" + option.hasRefImage}/>
                 </Space>
             </div>
             <div className={"work-infinite-scroll-list"}>
@@ -276,7 +278,7 @@ function Work() {
                                                     <span className={"work-prompt"}>
                                                         <span className={"work-prompt-content"}>{w.prompt}</span>
                                                         <i className="icon-copy" onClick={() => handleCopy(w.prompt)}>
-                                                            <CopyIcon title={"复制"}/>
+                                                            <CopyIcon title={t('common.t_copy')}/>
                                                         </i>
                                                     </span>
                                                 </Tooltip>

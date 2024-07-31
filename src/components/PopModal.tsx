@@ -4,6 +4,8 @@ import {Modal} from "antd";
 interface IPopModalProps {
     title: string
     width: number,
+    okText: string,
+    cancelText: string,
     footer?: React.ReactNode,
     children?: React.ReactNode
     onOk?: () => void
@@ -37,8 +39,8 @@ const PopModal = React.forwardRef((props: IPopModalProps, ref) => {
         <Modal title={props.title}
                open={open}
                onOk={handleOnOk}
-               okText={"确定"}
-               cancelText={"取消"}
+               okText={props.okText}
+               cancelText={props.cancelText}
                width={props.width}
                footer={props.footer}
                onCancel={handleOnCancel}>

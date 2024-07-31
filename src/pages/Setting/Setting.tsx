@@ -6,9 +6,11 @@ import {isDeepEqual} from "@/utils/utils";
 import {throttle} from 'lodash-es';
 import {fetchUpdateUser} from "@/store/modules/user";
 import RequireAuth from "@/components/RequireAuth";
+import {useTranslation} from "react-i18next";
 
 function Setting() {
     const dispatch = useDispatch();
+    const {t} = useTranslation();
     const [showPwd, setShowPwd] = useState(false);
     const [settingForm] = Form.useForm();
     const [accountForm] = Form.useForm();
@@ -42,7 +44,7 @@ function Setting() {
 
     function handleSetting() {
         const callback = throttle(() => {
-            message.success("保存成功");
+            message.success(t('setting.save_success'));
             setShowPwd(false);
             loadData();
         }, 3000, {trailing: false});
@@ -58,16 +60,15 @@ function Setting() {
             dispatch(fetchUpdateUser(userData, callback));
         }
     }
-    // setStorage(settingInfo.store_name);
 
     return (
         <div className={"setting-container"}>
             <Card extra={<Button type={"primary"}
                                  onClick={handleSetting}
-                                 style={{marginTop: 12}}>保存</Button>}>
+                                 style={{marginTop: 12}}>{t('common.save')}</Button>}>
                 <RequireAuth allowedRoles={['ADMIN']}>
                     <div>
-                        <Divider orientation="left" style={{marginTop: 0}}>系统设置</Divider>
+                        <Divider orientation="left" style={{marginTop: 0}}>{t('setting.system')}</Divider>
                         <Form style={{
                             maxWidth: 600,
                             marginLeft: 120
@@ -82,28 +83,28 @@ function Setting() {
                         >
                             <Row>
                                 <Col offset={2} span={22}>
-                                    <Form.Item label="存储服务" name="store_name">
+                                    <Form.Item label={t('setting.store_service')} name="store_name">
                                         <Radio.Group onChange={handleStorage}>
-                                            <Radio value={"local"}>本地存储</Radio>
-                                            <Radio value={"cos"}>腾讯云COS</Radio>
-                                            <Radio value={"oss"}>阿里云OSS</Radio>
+                                            <Radio value={"local"}>{t('setting.store.local')}</Radio>
+                                            <Radio value={"cos"}>{t('setting.store.tx')}</Radio>
+                                            <Radio value={"oss"}>{t('setting.store.ali')}</Radio>
                                         </Radio.Group>
                                     </Form.Item>
                                 </Col>
                                 <Col offset={2} span={22}>
-                                    <Form.Item label="存储地址" name="store_address">
+                                    <Form.Item label={t('setting.store_address')} name="store_address">
                                         <Input/>
                                     </Form.Item>
                                 </Col>
                                 {
                                     storage != 'local' && <>
                                         <Col offset={2} span={22}>
-                                            <Form.Item label="存储ID" name="secure_id">
+                                            <Form.Item label={t('setting.secure_id')} name="secure_id">
                                                 <Input.Password/>
                                             </Form.Item>
                                         </Col>
                                         <Col offset={2} span={22}>
-                                            <Form.Item label="存储KEY" name="secure_key">
+                                            <Form.Item label={t('setting.secure_key')} name="secure_key">
                                                 <Input.Password/>
                                             </Form.Item>
                                         </Col>
@@ -111,13 +112,13 @@ function Setting() {
                                 }
                                 {
                                     storage == 'oss' && <Col offset={2} span={22}>
-                                        <Form.Item label="存储桶名称" name="store_bucket">
+                                        <Form.Item label={t('setting.store_bucket')} name="store_bucket">
                                             <Input/>
                                         </Form.Item>
                                     </Col>
                                 }
                                 <Col offset={2} span={22}>
-                                    <Form.Item label="初始/重置用户密码" name="init_pwd">
+                                    <Form.Item label={t('setting.init_pwd')} name="init_pwd">
                                         <Input.Password/>
                                     </Form.Item>
                                 </Col>
@@ -126,7 +127,7 @@ function Setting() {
                     </div>
                 </RequireAuth>
                 <div>
-                    <Divider orientation="left">账号设置</Divider>
+                    <Divider orientation="left">{t('setting.account')}</Divider>
                     <Form style={{
                         maxWidth: 600,
                         marginLeft: 120
@@ -141,12 +142,12 @@ function Setting() {
                     >
                         <Row>
                             <Col offset={2} span={22}>
-                                <Form.Item label="用户名" name="username">
+                                <Form.Item label={t('setting.username')} name="username">
                                     <Input/>
                                 </Form.Item>
                             </Col>
                             <Col offset={2} span={22}>
-                                <Form.Item label="昵称" name="nickname">
+                                <Form.Item label={t('setting.nickname')} name="nickname">
                                     <Input/>
                                 </Form.Item>
                             </Col>
@@ -154,12 +155,12 @@ function Setting() {
                                 showPwd ? (
                                     <>
                                         <Col offset={2} span={22}>
-                                            <Form.Item label="旧密码" name="old_password">
+                                            <Form.Item label={t('setting.old_password')} name="old_password">
                                                 <Input.Password/>
                                             </Form.Item>
                                         </Col>
                                         <Col offset={2} span={22}>
-                                            <Form.Item label="新密码" name="new_password">
+                                            <Form.Item label={t('setting.new_password')} name="new_password">
                                                 <Input.Password/>
                                             </Form.Item>
                                         </Col>
@@ -170,7 +171,7 @@ function Setting() {
                                             offset: 6,
                                             span: 16,
                                         }}>
-                                            <Button type={"primary"} onClick={() => handleSetPwd(true)}>修改密码</Button>
+                                            <Button type={"primary"} onClick={() => handleSetPwd(true)}>{t('setting.change_password')}</Button>
                                         </Form.Item>
                                     </Col>
                                 )

@@ -3,6 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {fetchAnalysisBase, fetchAnalysisTask, fetchAnalysisUser} from "@/store/modules/analyse";
+import { useTranslation } from 'react-i18next';
 
 const dayIcon = 'M256 0h64v256H256zM704 0h64v256h-64zM384 128h256v64H384z M832 128v64h119.04v768H72.96V192H192V128H0v896h1024V128z M241.28 558.08c10.24-3.84 25.6-12.16 46.08-24.32 20.48-13.44 39.04-26.88 55.04-42.24a1065.472 1065.472 0 0 0 77.44-84.48c7.68-8.32 16-20.48 26.24-34.56 9.6-14.72 16.64-25.6 20.48-33.28l9.6-19.2c17.28 9.6 28.16 14.72 32 16l32.64 12.16-10.24 11.52c4.48 9.6 10.88 23.04 18.56 39.68 7.68 16.64 22.4 35.84 42.88 56.96 20.48 20.48 46.08 39.04 76.16 53.76 30.08 15.36 58.88 24.32 85.12 27.52l14.72 0.64c-8.32 7.04-13.44 12.8-17.92 16-3.84 4.48-8.96 10.24-15.36 17.92-6.4 8.32-10.24 14.72-11.52 18.56l-7.04 19.2-13.44-7.04c-49.28-26.88-83.2-48.64-101.76-64.64-19.2-17.28-37.76-35.84-55.04-56.96-17.92-20.48-30.72-40.32-39.04-58.24l-11.52-22.4c-24.96 31.36-46.72 58.24-66.56 80-19.2 22.4-42.24 46.08-68.48 69.76-26.24 23.68-49.92 43.52-70.4 58.88l-8.96 5.76c-5.12-8.96-9.6-17.28-14.08-23.68-5.12-6.4-18.56-16-39.68-28.8l14.08-4.48z m56.32 91.52v-20.48l-1.28-16.64c41.6 2.56 65.28 3.84 70.4 3.84h234.24c1.28 0 30.08-1.28 87.04-3.2l-25.6 42.88c-35.84 60.16-81.28 124.8-135.68 196.48l-10.88 14.08c-6.4-5.76-11.52-10.24-16.64-14.08-5.12-3.84-18.56-10.88-42.24-21.12l9.6-7.68c12.8-10.88 28.8-26.88 47.36-46.72 17.92-20.48 43.52-57.6 76.8-112h-224c-14.72 0-38.4 1.28-70.4 3.84a128 128 0 0 1 1.28-19.2zM512 487.04l26.88 92.16c-28.8 3.84-44.16 6.4-44.8 6.4l-15.36 3.2-3.2-16c-1.92-8.96-5.12-19.84-7.68-32.64-3.2-12.16-6.4-21.76-8.32-28.16l-5.76-15.36c14.72-1.28 33.92-4.48 58.24-9.6z';
 const weekIcon = 'path://M752.3 126.1V77.9h-50v48.2H321.7V77.9h-50v48.2H64v820h896v-820H752.3z m157.7 780H114v-730h157.7v51.8h50v-51.8h380.5v51.8h50v-51.8H910v730zM396.2 395.4h231.7v34.2c-22.8 24.3-45.4 56.5-67.7 96.7-22.4 40.2-39.7 81.5-51.9 124-8.8 29.9-14.4 62.7-16.8 98.4h-45.2c0.5-28.2 6-62.2 16.6-102.1 10.6-39.9 25.8-78.3 45.5-115.4 19.8-37 40.8-68.2 63.1-93.6H396.2v-42.2z';
@@ -12,6 +13,7 @@ function Analysis() {
     const [taskDay, setTaskDay] = useState({day: 7});
     const [userDay, setUserDay] = useState({day: 1});
     const dispatch = useDispatch();
+    const { t, i18n } = useTranslation();
     const baseData = useSelector(state => state.analysis.baseData);
     const taskData = useSelector(state => state.analysis.taskData);
     const userData = useSelector(state => state.analysis.userData);
@@ -32,9 +34,10 @@ function Analysis() {
     const taskLegendData = [];
     const taskSeriesData = [];
     taskData.tasks.map(t => {
-        taskLegendData.push(t.name);
+        const name = i18n.language == 'zh' ? t.name : t.en_name;
+        taskLegendData.push(name);
         taskSeriesData.push({
-            name: t.name,
+            name: name,
             type: 'line',
             areaStyle: {normal: {}},
             data: t.data
@@ -43,7 +46,7 @@ function Analysis() {
 
     const option = {
         title: {
-            text: '任务数据'
+            text: t('analyse.task_data')
         },
         tooltip: {
             trigger: 'axis'
@@ -55,7 +58,7 @@ function Analysis() {
             feature: {
                 myWeekly: {
                     show: true,
-                    title: '周数据',
+                    title: t('analyse.weekly_data'),
                     icon: weekIcon,
                     onclick: function () {
                         setTaskDay({day: 7});
@@ -63,14 +66,14 @@ function Analysis() {
                 },
                 myMonth: {
                     show: true,
-                    title: '月数据',
+                    title: t('analyse.month_data'),
                     icon: monthIcon,
                     onclick: function () {
                         setTaskDay({day: 30});
                     }
                 },
                 saveAsImage: {
-                    title: '保存图片'
+                    title: t('analyse.save_image')
                 },
             }
         },
@@ -105,7 +108,7 @@ function Analysis() {
 
     const option2 = {
         title: {
-            text: '用户数据'
+            text: t('analyse.user_data')
         },
         color: ["#3398DB"],
         tooltip: {
@@ -118,7 +121,7 @@ function Analysis() {
             feature: {
                 myDay: {
                     show: true,
-                    title: '当前数据',
+                    title: t('analyse.today_data'),
                     icon: dayIcon,
                     onclick: function () {
                         setUserDay({day: 1});
@@ -126,7 +129,7 @@ function Analysis() {
                 },
                 myWeekly: {
                     show: true,
-                    title: '周数据',
+                    title: t('analyse.weekly_data'),
                     icon: weekIcon,
                     onclick: function () {
                         setUserDay({day: 7});
@@ -134,14 +137,14 @@ function Analysis() {
                 },
                 myMonth: {
                     show: true,
-                    title: '月数据',
+                    title: t('analyse.month_data'),
                     icon: monthIcon,
                     onclick: function () {
                         setUserDay({day: 30});
                     }
                 },
                 saveAsImage: {
-                    title: '保存图片'
+                    title: t('analyse.save_image')
                 },
             }
         },
@@ -157,7 +160,7 @@ function Analysis() {
             type: "value"
         }],
         series: [{
-            name: "提交任务数",
+            name: t('analyse.submit_task_count'),
             type: "bar",
             barWidth: "60%",
             data: userSeriesData
@@ -172,7 +175,7 @@ function Analysis() {
                         <Col span={6}>
                             <Card>
                                 <div>
-                                    <p className={"analyse-title"}>任务总数</p>
+                                    <p className={"analyse-title"}>{t('analyse.task_total')}</p>
                                     <p className={"analyse-value"}>{baseData.task_total}</p>
                                 </div>
                             </Card>
@@ -180,7 +183,7 @@ function Analysis() {
                         <Col span={6}>
                             <Card>
                                 <div>
-                                    <p className={"analyse-title"}>作品总数</p>
+                                    <p className={"analyse-title"}>{t('analyse.work_total')}</p>
                                     <p className={"analyse-value"}>{baseData.work_total}</p>
                                 </div>
                             </Card>
@@ -188,7 +191,7 @@ function Analysis() {
                         <Col span={6}>
                             <Card>
                                 <div>
-                                    <p className={"analyse-title"}>优秀作品总数</p>
+                                    <p className={"analyse-title"}>{t('analyse.excellent_total')}</p>
                                     <p className={"analyse-value"}>{baseData.excellent_total}</p>
                                 </div>
                             </Card>
@@ -196,7 +199,7 @@ function Analysis() {
                         <Col span={6}>
                             <Card>
                                 <div>
-                                    <p className={"analyse-title"}>用户数</p>
+                                    <p className={"analyse-title"}>{t('analyse.account_total')}</p>
                                     <p className={"analyse-value"}>{baseData.account_total}</p>
                                 </div>
                             </Card>
@@ -204,7 +207,7 @@ function Analysis() {
                         <Col span={8}>
                             <Card>
                                 <div>
-                                    <p className={"analyse-title"}>今日提交任务数</p>
+                                    <p className={"analyse-title"}>{t('analyse.today_task_count')}</p>
                                     <p className={"analyse-value"}>{baseData.today_task_count}</p>
                                 </div>
                             </Card>
@@ -212,7 +215,7 @@ function Analysis() {
                         <Col span={8}>
                             <Card>
                                 <div>
-                                    <p className={"analyse-title"}>今日提交作品数</p>
+                                    <p className={"analyse-title"}>{t('analyse.today_work_count')}</p>
                                     <p className={"analyse-value"}>{baseData.today_work_count}</p>
                                 </div>
                             </Card>
@@ -220,7 +223,7 @@ function Analysis() {
                         <Col span={8}>
                             <Card>
                                 <div>
-                                    <p className={"analyse-title"}>今日优秀作品数</p>
+                                    <p className={"analyse-title"}>{t('analyse.today_excellent_count')}</p>
                                     <p className={"analyse-value"}>{baseData.today_excellent_count}</p>
                                 </div>
                             </Card>

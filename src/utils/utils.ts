@@ -82,17 +82,17 @@ export const downloadFile = (url) => {
     });
 };
 
-export function getGenerateCategory(category: string): string {
+export function getGenerateCategory(category: string, language): string {
     if (category === 'txt2img') {
-        return "文生图";
+        return (language === 'en' ? category : "文生图");
     } else if (category === "img2img") {
-        return "图生图";
+        return (language === 'en' ? category : "图生图");
     }
-    return "文生图";
+    return (language === 'en' ? 'txt2img' : "文生图");
 }
 
-export function getEmpty(value): string {
-    return isEmpty(value) ? "空" : value;
+export function getEmpty(value, language): string {
+    return isEmpty(value) ? (language === 'en' ? "null" : "空") : value;
 }
 
 export function isDeepEqual(obj1, obj2) {
@@ -128,12 +128,26 @@ const handleErr = throttle((data) => {
     if (isEmpty(data)) {
         message.error("操作失败");
     } else if (data.hasOwnProperty('code')) {
-        message.error("操作失败，" + data.code + " : " + data.message);
+        message.error("操作失败，" + data.code + " : " + data.desc);
     } else {
         message.error("操作失败，" + data);
     }
 }, 3000, {trailing: false});
 
+const handleEnErr = throttle((data) => {
+    if (isEmpty(data)) {
+        message.error("error");
+    } else if (data.hasOwnProperty('code')) {
+        message.error("error，" + data.code + " : " + data.message);
+    } else {
+        message.error("error，" + data);
+    }
+}, 3000, {trailing: false});
+
 export function errors(data) {
-    handleErr(data);
+    const locale = localStorage.getItem('selectedLocale');
+    if (locale == 'zh') {
+        return handleErr(data);
+    }
+    return handleEnErr(data);
 }

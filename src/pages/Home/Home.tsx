@@ -1,54 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {AreaChartOutlined, ProductOutlined, SettingOutlined, TeamOutlined, UserOutlined} from '@ant-design/icons';
 import {Avatar, Dropdown, Image, Layout, Menu, Space, theme} from 'antd';
+import { useTranslation } from 'react-i18next';
 import {Outlet, useNavigate} from 'react-router-dom';
-import Logo from '@/assets/logo.png';
+import Logo from '@/assets/logo1.png';
 import {fetchUserInfo, getUserToken, logout} from "@/store/modules/user";
 import {isEmpty} from "@/utils/utils";
 import './index.less';
 import {useDispatch, useSelector} from "react-redux";
 import {CollapseContext} from "@/hook/context";
+import Language from "@/components/Language";
 
 
 const {Header, Content, Footer, Sider} = Layout;
 
-const menuItems = [
-    {
-        key: '/analyse',
-        icon: <AreaChartOutlined/>,
-        label: '统计表单',
-        role: ['ADMIN']
-    },
-    {
-        key: '/work-manage',
-        icon: <ProductOutlined/>,
-        label: '作品管理',
-        children: [
-            {
-                key: '/work',
-                label: '作品库',
-                role: ['ADMIN', 'USER']
-            },
-            {
-                key: '/task',
-                label: '任务列表',
-                role: ['ADMIN', 'USER']
-            }
-        ]
-    },
-    {
-        key: '/user',
-        icon: <TeamOutlined/>,
-        label: '用户中心',
-        role: ['ADMIN']
-    },
-    {
-        key: '/setting',
-        icon: <SettingOutlined/>,
-        label: '系统设置',
-        role: ['ADMIN', 'USER']
-    },
-];
 
 const Home: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -56,17 +21,56 @@ const Home: React.FC = () => {
     const [refreshWork, setRefreshWork] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
     const userInfo = useSelector(state => state.user.userInfo);
 
     const userItems = [
         {
             key: 'info',
-            label: <span>用户名: {userInfo.nickname}</span>,
+            label: <span>{t('user.nickname')}: {userInfo.nickname}</span>,
         },
         {
             key: 'logout',
-            label: <span onClick={handleLogout}>退出登录</span>,
+            label: <span onClick={handleLogout}>{t('common.logout')}</span>,
         }
+    ];
+
+    const menuItems = [
+        {
+            key: '/analyse',
+            icon: <AreaChartOutlined/>,
+            label: t('menu.analyse'),
+            role: ['ADMIN']
+        },
+        {
+            key: '/work-manage',
+            icon: <ProductOutlined/>,
+            label: t('menu.work_manage'),
+            children: [
+                {
+                    key: '/work',
+                    label: t('menu.work'),
+                    role: ['ADMIN', 'USER']
+                },
+                {
+                    key: '/task',
+                    label: t('menu.task'),
+                    role: ['ADMIN', 'USER']
+                }
+            ]
+        },
+        {
+            key: '/user',
+            icon: <TeamOutlined/>,
+            label: t('menu.user'),
+            role: ['ADMIN']
+        },
+        {
+            key: '/setting',
+            icon: <SettingOutlined/>,
+            label: t('menu.setting'),
+            role: ['ADMIN', 'USER']
+        },
     ];
 
     const {
@@ -137,23 +141,26 @@ const Home: React.FC = () => {
                 <Layout>
                     <Header style={{padding: 0, background: colorBgContainer}}>
                         <div className={"user-info"}>
-                            <Dropdown
-                                menu={{
-                                    items: userItems,
-                                }}
-                                placement="bottom"
-                                trigger={['click']}
-                            >
-                                <Space>
-                                    <Avatar
-                                        style={{
-                                            backgroundColor: '#87d068',
-                                        }}
-                                        icon={<UserOutlined/>}
-                                    />
-                                    <span>{userInfo.nickname}</span>
-                                </Space>
-                            </Dropdown>
+                            <Space size={"large"}>
+                                <Language />
+                                <Dropdown
+                                    menu={{
+                                        items: userItems,
+                                    }}
+                                    placement="bottom"
+                                    trigger={['click']}
+                                >
+                                    <Space>
+                                        <Avatar
+                                            style={{
+                                                backgroundColor: '#87d068',
+                                            }}
+                                            icon={<UserOutlined/>}
+                                        />
+                                        <span>{userInfo.nickname}</span>
+                                    </Space>
+                                </Dropdown>
+                            </Space>
                         </div>
                     </Header>
                     <Content style={{margin: '12px'}}>
@@ -163,7 +170,7 @@ const Home: React.FC = () => {
                         </div>
                     </Content>
                     <Footer style={{textAlign: 'center', fontSize: 13, opacity: 0.9}}>
-                        Copyright © {new Date().getFullYear()} AI 图库
+                        Copyright © {new Date().getFullYear()} Gallery
                     </Footer>
                 </Layout>
             </Layout>

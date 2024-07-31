@@ -11,26 +11,13 @@ import {downloadFile, getGenerateCategory, isEmpty} from "@/utils/utils";
 import {DownloadOutlined, EyeOutlined} from '@ant-design/icons';
 import RequireAuth from "@/components/RequireAuth";
 import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const {RangePicker} = DatePicker;
 
-const statusOptions = [
-    {
-        value: 'PROGRESS',
-        label: '处理中',
-    },
-    {
-        value: 'COMPLETE',
-        label: '已完成',
-    },
-    {
-        value: 'EXCEPTION',
-        label: '异常',
-    },
-];
-
 function Task() {
     const dispatch = useDispatch();
+    const { t, i18n } = useTranslation();
     const {page, setPage, handlePage} = usePage(10, loadTaskData);
     const {form, handleFormValueChange} = useForm(() => setPage({...page, offset: 1}));
     const taskList = useSelector(state => state.work.taskList);
@@ -99,72 +86,90 @@ function Task() {
         });
     });
 
+    const statusOptions = [
+        {
+            value: 'PROGRESS',
+            label: t('task.progress'),
+        },
+        {
+            value: 'COMPLETE',
+            label: t('task.complete'),
+        },
+        {
+            value: 'EXCEPTION',
+            label: t('task.exception'),
+        },
+    ];
+
     const columns = [
         {
-            title: '类型',
+            title: t('detail.category'),
             dataIndex: 'category',
             width: 100,
             key: 'category',
-            render: (text) => getGenerateCategory(text)
+            render: (text) => getGenerateCategory(text, i18n.language)
         },
         {
-            title: '图片数量',
+            title: t('detail.total'),
             dataIndex: 'total',
             key: 'total',
         },
         {
-            title: '上传人',
+            title: t('task.author'),
             dataIndex: 'author_name',
             key: 'author_name',
         },
         {
-            title: '提示词',
+            title: t('task.author'),
             width: 400,
             dataIndex: 'prompt',
             key: 'prompt',
         },
         {
-            title: '上传时间',
+            title: t('detail.job_timestamp'),
             dataIndex: 'job_timestamp',
             key: 'job_timestamp',
         },
         {
-            title: '状态',
+            title: t('task.status'),
             dataIndex: 'status',
             key: 'status',
             width: 80,
             render: (text) => {
                 if (text === "PROGRESS") {
-                    return <span>处理中</span>;
+                    return <span>{t('task.progress')}</span>;
                 } else if (text === "COMPLETE") {
-                    return <span style={{color: "#87d068"}}>已完成</span>;
+                    return <span style={{color: "#87d068"}}>{t('task.complete')}</span>;
                 } else if (text === "EXCEPTION") {
-                    return <span style={{color: "#ff4d4f"}}>异常</span>;
+                    return <span style={{color: "#ff4d4f"}}>{t('task.exception')}</span>;
                 } else {
-                    return <span>已提交</span>;
+                    return <span>{t('task.init')}</span>;
                 }
             }
         },
         {
-            title: '处理进度',
+            title: t('task.schedule'),
             key: 'progress',
             render: (_, record) => {
-                return <span>{record.count} / {record.total}</span>
+                return <span>{record.count} / {record.total}</span>;
             }
         },
         {
-            title: '操作',
+            title: t('common.action'),
             key: 'action',
             width: 150,
             render: (_, record) => (
                 <Space>
                     <TagButton color="#2db7f5"
-                               onClick={() => handleTaskImage(record.task_id, record.image_urls)}>查看</TagButton>
-                    <TagButton color="#87d068" onClick={() => handleDownloadAllImage(record.image_urls)}>下载</TagButton>
+                               onClick={() => handleTaskImage(record.task_id, record.image_urls)}>{t('common.view')}</TagButton>
+                    <TagButton color="#87d068" onClick={() => handleDownloadAllImage(record.image_urls)}>{t('common.download')}</TagButton>
                 </Space>
             )
         }
     ];
+
+    const preview = t('common.preview');
+    const download = t('common.download');
 
     return (
         <div>
@@ -176,34 +181,34 @@ function Task() {
                           onFieldsChange={handleFormValueChange}
                     >
                         <Row>
-                            <Col span={6}>
-                                <Form.Item label="创建时间" name="time">
+                            <Col span={7}>
+                                <Form.Item label={t('detail.job_timestamp')} name="time">
                                     <RangePicker/>
                                 </Form.Item>
                             </Col>
                             <RequireAuth allowedRoles={['ADMIN']}>
-                                <Col span={6}>
-                                    <Form.Item label="上传人" name="author_ids">
+                                <Col span={7}>
+                                    <Form.Item label={t('task.author')} name="author_ids">
                                         <Select
                                             mode="multiple"
                                             allowClear
                                             style={{
                                                 width: '100%',
                                             }}
-                                            placeholder="请选择上传人"
+                                            placeholder={t('task.author_placeholder')}
                                             options={authorOption}
                                         />
                                     </Form.Item>
                                 </Col>
                             </RequireAuth>
-                            <Col span={6}>
-                                <Form.Item label="状态" name="status">
+                            <Col span={7}>
+                                <Form.Item label={t('task.status')} name="status">
                                     <Select
                                         allowClear
                                         style={{
                                             width: '100%',
                                         }}
-                                        placeholder="请选择状态"
+                                        placeholder={t('task.status_placeholder')}
                                         options={statusOptions}
                                     />
                                 </Form.Item>
@@ -220,15 +225,24 @@ function Task() {
                         pageSize: page.limit,
                         total: taskList.total,
                         onChange: page => handlePage(page),
-                        showTotal: total => `共 ${total} 条`,
+                        showTotal: total => {
+                            if (i18n.language == 'zh') {
+                                return `共 ${total} 条`;
+                            }
+                            return `${total} in total`;
+                        }
                     }}
                            columns={columns}
                            dataSource={taskList.data}/>
                 </Card>
             </div>
 
-            <PopModal title={"图片列表"} width={560} ref={taskImageModelRef}
-                      footer={<Button type={"primary"} onClick={() => handleNavDetail(taskImages.task_id)}>查看详情</Button>}>
+            <PopModal title={t('task.pic_list')}
+                      width={560}
+                      ref={taskImageModelRef}
+                      okText={t('common.ok')}
+                      cancelText={t('common.cancel')}
+                      footer={<Button type={"primary"} onClick={() => handleNavDetail(taskImages.task_id)}>{t('task.view_detail')}</Button>}>
                 <div style={{margin: 32}}>
                     <Row gutter={[24, 24]}>
                         {
@@ -238,8 +252,8 @@ function Task() {
                                            preview={{
                                                mask:
                                                    <Space>
-                                                       <span><EyeOutlined/> 预览</span>
-                                                       <span onClick={(e) => handleDownload(e, t)}><DownloadOutlined/> 下载</span>
+                                                       <span><EyeOutlined/> {preview}</span>
+                                                       <span onClick={(e) => handleDownload(e, t)}><DownloadOutlined/> {download}</span>
                                                    </Space>
                                            }}
                                     />
